@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 )
@@ -52,11 +53,20 @@ rf.fit(X_train, y_train)
 # Decision Tree Model
 dt = DecisionTreeClassifier(
     max_depth=6,
+    min_samples_leaf=10,
     random_state=42
 )
 dt.fit(X_train, y_train)
 
-
+# XGBoost Model
+xgb = XGBClassifier(
+    n_estimators=200,
+    learning_rate=0.1,
+    max_depth=5,
+    random_state=42,
+    eval_metric='logloss'
+)
+xgb.fit(X_train, y_train)
 
 print("Model training complete!")
 print("-" * 60)
@@ -123,7 +133,9 @@ print("=" * 60)
 print_metrics("Decision Tree", y_test, dt_predict)
 print_cm("Decision Tree", y_test, dt_predict)
 
-
+# XGBoost results
+print_metrics("XGBoost", y_test, xgb_predict)
+print_cm("XGBoost", y_test, xgb_predict)
 
 
 # ------------------------------------------------------------
@@ -143,14 +155,14 @@ for i in sample_indices:
     p_lr = int(lr.predict(x_one)[0])
     p_rf = int(rf.predict(x_one)[0])
     p_dt = int(dt.predict(x_one)[0])
- 
+    p_xgb = int(xgb.predict(x_one)[0])
 
     print(f"Sample {i}:")
     print(f"Actual Heart_Risk: {bin2str(y_true)}")
     print(f"Logistic Regression Prediction: {bin2str(p_lr)}")
     print(f"Random Forest Prediction      : {bin2str(p_rf)}")
     print(f"Decision Tree Prediction      : {bin2str(p_dt)}")
-    
+    print(f"XGBoost Prediction            : {bin2str(p_xgb)}")
     print("-" * 60)
 
 custom = {
@@ -177,12 +189,13 @@ print("\n=== Custom Input Prediction ===")
 print("Logistic Regression:", float(lr.predict(x_new_df)[0]))
 print("Random Forest    :", float(rf.predict(x_new_df)[0])) 
 print("Decision Tree    :", float(dt.predict(x_new_df)[0]))
-
+print("XGBoost          :", float(xgb.predict(x_new_df)[0]))
 
 # SAVE MODELS 
 joblib.dump(lr, "models/lr_model.joblib")
 joblib.dump(rf, "models/rf_model.joblib")
 joblib.dump(dt, "models/dt_model.joblib")
+joblib.dump(xgb, "models/xgb_model.joblib")
 # ------------------------------------------------------------
 # END OF SCRIPT
 # ------------------------------------------------------------
