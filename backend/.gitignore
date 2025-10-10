@@ -3,9 +3,12 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+# local storage
+users.json
 
 
 # IDE / OS
-.vscode/
+*.vscode/
+settings.json
 .DS_Store
 .idea/
