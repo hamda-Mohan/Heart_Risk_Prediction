@@ -8,7 +8,7 @@ users.json
 
 
 # IDE / OS
-*.vscode/
+.vscode/
 settings.json
 .DS_Store
 .idea/
