@@ -13,6 +13,7 @@ CORS(app)
 MODELS = {
     "lr": joblib.load("models/lr_model.joblib"),
     "rf": joblib.load("models/rf_model.joblib"),
+    "dt": joblib.load("models/dt_model.joblib")
 }
 
 # ---------------- Auth Endpoints ----------------
@@ -59,7 +60,7 @@ def predict():
     data = request.get_json()
     model_name = (request.args.get("model") or "").lower()
     if model_name not in MODELS:
-        return jsonify({"error": "Unknown model. Use model=lr or model=rf"}), 400
+        return jsonify({"error": "Unknown model. Use model=lr or model=rf or model=dt"}), 400
     model = MODELS[model_name]
 
     required = [
@@ -80,7 +81,7 @@ def predict():
         return jsonify({"error": f"Failed to prepare/predict: {e}"}), 500
 
     return jsonify({
-        "model": "logistic_regression" if model_name=="lr" else "random_forest",
+        "model": "logistic_regression" if model_name=="lr" else "random_forest" if model_name=="rf" else "decision_tree",
         "input": data,
         "prediction": pred,
         "probability": round(prob, 2) if prob is not None else "N/A"
