@@ -7,6 +7,7 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 )
@@ -48,6 +49,15 @@ lr.fit(X_train, y_train)
 rf = RandomForestClassifier(n_estimators=200, random_state=42)
 rf.fit(X_train, y_train)
 
+# Decision Tree Model
+dt = DecisionTreeClassifier(
+    max_depth=6,
+    random_state=42
+)
+dt.fit(X_train, y_train)
+
+
+
 print("Model training complete!")
 print("-" * 60)
 
@@ -59,6 +69,9 @@ print("Making predictions...")
 # Predictions
 lr_predict = lr.predict(X_test)
 rf_predict = rf.predict(X_test)
+dt_predict = dt.predict(X_test)
+xgb_predict = xgb.predict(X_test)
+
 
 print("Predictions generated!")
 print("-" * 60)
@@ -106,6 +119,12 @@ print_metrics("Random Forest", y_test, rf_predict)
 print_cm("Random Forest", y_test, rf_predict)
 print("=" * 60)
 
+# Decision Tree results
+print_metrics("Decision Tree", y_test, dt_predict)
+print_cm("Decision Tree", y_test, dt_predict)
+
+
+
 
 # ------------------------------------------------------------
 # SAMPLE PREDICTIONS (SANITY CHECK)
@@ -116,18 +135,22 @@ def bin2str(v):
     """Convert 0/1 to readable labels."""
     return "💚 Low Risk (0)" if v == 0 else "❤️ High Risk (1)"
 
-sample_indices = [13, 4, 6]
+sample_indices = [13, 4, 6,7000,9354,12345,]
 
 for i in sample_indices:
     x_one = X_test.iloc[[i]]      # Single test sample
     y_true = y_test.iloc[i]       # Actual label
     p_lr = int(lr.predict(x_one)[0])
     p_rf = int(rf.predict(x_one)[0])
+    p_dt = int(dt.predict(x_one)[0])
+ 
 
     print(f"Sample {i}:")
     print(f"Actual Heart_Risk: {bin2str(y_true)}")
     print(f"Logistic Regression Prediction: {bin2str(p_lr)}")
     print(f"Random Forest Prediction      : {bin2str(p_rf)}")
+    print(f"Decision Tree Prediction      : {bin2str(p_dt)}")
+    
     print("-" * 60)
 
 custom = {
@@ -153,10 +176,13 @@ x_new_df = prepare_features_from_raw(custom)
 print("\n=== Custom Input Prediction ===")
 print("Logistic Regression:", float(lr.predict(x_new_df)[0]))
 print("Random Forest    :", float(rf.predict(x_new_df)[0])) 
+print("Decision Tree    :", float(dt.predict(x_new_df)[0]))
+
 
 # SAVE MODELS 
 joblib.dump(lr, "models/lr_model.joblib")
 joblib.dump(rf, "models/rf_model.joblib")
+joblib.dump(dt, "models/dt_model.joblib")
 # ------------------------------------------------------------
 # END OF SCRIPT
 # ------------------------------------------------------------
