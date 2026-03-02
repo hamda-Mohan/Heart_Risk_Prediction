@@ -10,7 +10,9 @@ from auth_utils import (
 app = Flask(__name__)
 
 # ✅ Secure & full CORS config for frontend on port 3000
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+CORS(app)
+
+# , supports_credentials=True, origins=["http://localhost:3000"]
 
 @app.after_request
 def add_cors_headers(response):
