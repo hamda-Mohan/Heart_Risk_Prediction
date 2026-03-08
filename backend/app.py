@@ -9,15 +9,18 @@ from auth_utils import (
 
 app = Flask(__name__)
 
-# ✅ Secure & full CORS config for frontend on port 3000
-CORS(app)
-
-# , supports_credentials=True, origins=["http://localhost:3000"]
+#  Secure & full CORS config for frontend on port 3000
+CORS(
+    app,
+    supports_credentials=True,
+    origins=[
+        "http://localhost:3000",
+        "https://heart-risk-prediction-frontend.vercel.app"
+    ]
+)
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
-    response.headers["Access-Control-Allow-Credentials"] = "true"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type,Authorization"
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS"
     return response
